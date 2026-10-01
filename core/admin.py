@@ -52,4 +52,7 @@ class UserAdmin(BaseUserAdmin):
     )
 
 
+admin.site.register(models.Category)
+admin.site.register(models.Message)
+admin.site.register(models.Pastoral)
 admin.site.register(models.User, UserAdmin)
