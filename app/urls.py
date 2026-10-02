@@ -10,9 +10,12 @@ from drf_spectacular.views import (
 from rest_framework.routers import DefaultRouter
 
 from core.views import (
+    CategoryViewSet,
     CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
+    MessageViewSet,
+    PastoralViewSet,
     UserRegistrationView,
     UserViewSet,
 )
@@ -20,6 +23,9 @@ from uploader.router import router as uploader_router
 
 router = DefaultRouter()
 
+router.register(r'categorias', CategoryViewSet, basename='categorias')
+router.register(r'pastorais', PastoralViewSet, basename='pastorais')
+router.register(r'recados', MessageViewSet, basename='recados')
 router.register(r'usuarios', UserViewSet, basename='usuarios')
 
 urlpatterns = [
