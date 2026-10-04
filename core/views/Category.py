@@ -9,5 +9,6 @@ class CategoryViewSet(ModelViewSet):
 
     queryset = Category.objects.all().order_by('id')
     serializer_class = CategorySerializer
+    pagination_class = None
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'put', 'delete']

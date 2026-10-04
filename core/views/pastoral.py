@@ -8,6 +8,7 @@ from core.serializers import PastoralListRetrieveSerializer, PastoralSerializer
 class PastoralViewSet(ModelViewSet):
     queryset = Pastoral.objects.all().order_by('id')
     serializer_class = PastoralSerializer
+    pagination_class = None
     permission_classes = [IsAuthenticatedOrReadOnly]
     http_method_names = ['get', 'post', 'put', 'delete']
 
