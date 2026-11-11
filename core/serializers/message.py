@@ -18,7 +18,7 @@ class MessageSerializer(serializers.ModelSerializer):
     autor = serializers.HiddenField(default=serializers.CurrentUserDefault())
     class Meta:
         model = Message
-        fields = ['id', 'title', 'text', 'autor', 'image', 'event_date', 'created_at', 'pastoral', 'category', 'attachment_key']
+        fields = ['id', 'title', 'text', 'autor', 'image', 'event_date', 'created_at', 'pastoral', 'category', 'attachment_key', 'is_notice']  # ruff: ignore[line-too-long]
         read_only_fields = ['id', 'created_at']
 
 
@@ -27,5 +27,5 @@ class MessageListRetrieveSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'title', 'text', 'image', 'event_date', 'created_at', 'pastoral', 'category']
+        fields = ['id', 'title', 'text', 'image', 'event_date', 'created_at', 'pastoral', 'category', 'is_notice']
         read_only_fields = ['id', 'created_at']

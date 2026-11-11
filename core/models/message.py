@@ -19,6 +19,7 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     pastoral = models.ForeignKey(Pastoral, on_delete=models.CASCADE, related_name='messages')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='messages')
+    is_notice = models.BooleanField(default=False)
 
     class Meta:
         ordering = ['-created_at']
