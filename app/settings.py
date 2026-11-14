@@ -252,34 +252,34 @@ SIMPLE_JWT = {
 # Informações de configuração (debug)
 # ============================================================
 
-print('=' * 70)
-print('CONFIGURAÇÃO DA APLICAÇÃO')
-print('=' * 70)
+# print('=' * 70)
+# print('CONFIGURAÇÃO DA APLICAÇÃO')
+# print('=' * 70)
 
-print(f'DEBUG....................: {DEBUG if DEBUG else "NÃO DEFINIDO"}')
-print(f'SECRET_KEY...............: {SECRET_KEY if SECRET_KEY else "NÃO DEFINIDA"}')
+# print(f'DEBUG....................: {DEBUG if DEBUG else "NÃO DEFINIDO"}')
+# print(f'SECRET_KEY...............: {SECRET_KEY if SECRET_KEY else "NÃO DEFINIDA"}')
 
-print()
+# print()
 
-print(f'DATABASE ENGINE.............: {DATABASES["default"]["ENGINE"]}')
-print(f'DATABASE NAME...............: {DATABASES["default"]["NAME"]}')
+# print(f'DATABASE ENGINE.............: {DATABASES["default"]["ENGINE"]}')
+# print(f'DATABASE NAME...............: {DATABASES["default"]["NAME"]}')
 
-print()
+# print()
 
-print(f'FRONTEND_URLS ({len(FRONTEND_URLS)}).......: {FRONTEND_URLS}')
-print(f'CORS_ALLOWED_ORIGINS....: {CORS_ALLOWED_ORIGINS}')
-print(f'CSRF_TRUSTED_ORIGINS....: {CSRF_TRUSTED_ORIGINS}')
+# print(f'FRONTEND_URLS ({len(FRONTEND_URLS)}).......: {FRONTEND_URLS}')
+# print(f'CORS_ALLOWED_ORIGINS....: {CORS_ALLOWED_ORIGINS}')
+# print(f'CSRF_TRUSTED_ORIGINS....: {CSRF_TRUSTED_ORIGINS}')
 
-print()
+# print()
 
-print(f'MEDIA_URL...............: {MEDIA_URL}')
-print(f'MEDIA_ROOT..............: {MEDIA_ROOT}')
+# print(f'MEDIA_URL...............: {MEDIA_URL}')
+# print(f'MEDIA_ROOT..............: {MEDIA_ROOT}')
 
-print()
+# print()
 
-print(f'CLOUDINARY..............: {"SIM" if CLOUDINARY_URL else "NÃO"}')
+# print(f'CLOUDINARY..............: {"SIM" if CLOUDINARY_URL else "NÃO"}')
 
-if CLOUDINARY_URL:
-    print(f'CLOUDINARY_URL..........: {CLOUDINARY_URL}')
+# if CLOUDINARY_URL:
+#     print(f'CLOUDINARY_URL..........: {CLOUDINARY_URL}')
 
-print('=' * 70)
+# print('=' * 70)
