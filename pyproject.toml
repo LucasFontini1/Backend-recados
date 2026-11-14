@@ -72,3 +72,6 @@ ignore = ["PLR6301"]
 [tool.ruff.format]
 preview = true
 quote-style = 'single'
+
+[tool.vercel.scripts]
+build = 'if [ "$VERCEL_ENV" = "production" ]; then DATABASE_URL="$DATABASE_URL_MIGRATIONS" python manage.py migrate --noinput; fi'
