@@ -14,7 +14,7 @@ class Message(models.Model):
     title = models.CharField(max_length=150)
     text = models.TextField()
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='messages')
-    image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name='messages')
+    image = models.ForeignKey(Image, on_delete=models.CASCADE, related_name='messages', blank=True, null=True)
     event_date = models.DateTimeField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     pastoral = models.ForeignKey(Pastoral, on_delete=models.CASCADE, related_name='messages')

@@ -11,7 +11,6 @@ from core.serializers import MessageListRetrieveSerializer, MessageSerializer
 
 class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
-    pagination_class = None
     permission_classes = [IsAuthenticatedOrReadOnly]
 
     def get_queryset(self):

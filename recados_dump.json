@@ -1,0 +1,452 @@
+[
+{
+  "model": "core.message",
+  "pk": "5f21606a-db05-5905-b26b-4932d969ef20",
+  "fields": {
+    "title": "Envio de avisos para o mural paroquial",
+    "text": "As pastorais podem encaminhar seus avisos a secretaria, informando titulo, texto, data, horario e local para divulgacao no mural.",
+    "autor": 4,
+    "image": null,
+    "event_date": null,
+    "created_at": "2026-11-15T12:22:53.464Z",
+    "pastoral": 13,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "ca3cda13-d77a-5039-85ea-76057c99a80b",
+  "fields": {
+    "title": "Inscricoes abertas para voluntarios",
+    "text": "Quer ajudar na acolhida da comunidade? Procure a secretaria e deixe seu nome e contato para receber as orientacoes da equipe.",
+    "autor": 4,
+    "image": null,
+    "event_date": null,
+    "created_at": "2026-11-15T12:22:53.463Z",
+    "pastoral": 14,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "8fab5264-e06b-51ac-84e8-26188ecfc29b",
+  "fields": {
+    "title": "Ponto permanente de coleta de alimentos",
+    "text": "A secretaria recebe alimentos nao pereciveis durante o horario de atendimento. Confira a validade dos produtos antes de fazer sua doacao.",
+    "autor": 4,
+    "image": null,
+    "event_date": null,
+    "created_at": "2026-11-15T12:22:53.463Z",
+    "pastoral": 7,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "d64cce1d-b3f2-56be-bb83-1e3f7464ab99",
+  "fields": {
+    "title": "Resultados do mutirao comunitario",
+    "text": "Obrigado a todos que ajudaram no cuidado com os espacos da comunidade. Vamos reunir a equipe para avaliar o trabalho e planejar a continuidade.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-12T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.462Z",
+    "pastoral": 18,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "606a3f50-31b0-518d-9050-cfe2b88bb86b",
+  "fields": {
+    "title": "Avaliacao da acolhida do fim de semana",
+    "text": "A equipe vai partilhar os pontos positivos e as melhorias percebidas nas celebracoes. Traga suas anotacoes para a reuniao.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-13T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.462Z",
+    "pastoral": 14,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "3a5a277f-ac58-531a-836a-e4e756f47e0a",
+  "fields": {
+    "title": "Partilha da oficina de fotografia",
+    "text": "Agradecemos aos participantes da oficina. No encontro de avaliacao vamos selecionar as fotos e reunir sugestoes para as proximas atividades.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-14T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.462Z",
+    "pastoral": 13,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "a430ed27-d817-5647-8e1a-656aabdb3fed",
+  "fields": {
+    "title": "Encontro de jovens: amizade e fe",
+    "text": "Vamos conversar sobre amizade, fe e os desafios da juventude. O encontro sera no salao paroquial; traga um amigo.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-16T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.450Z",
+    "pastoral": 1,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "431718d7-8129-5ffa-bddc-5489faa66069",
+  "fields": {
+    "title": "Encontro das familias e acompanhamento infantil",
+    "text": "As familias estao convidadas para uma tarde de orientacao e atividades com as criancas. Traga a caderneta de acompanhamento.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-17T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.452Z",
+    "pastoral": 3,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "2869b82c-fb07-5cd7-a6cc-413349f75980",
+  "fields": {
+    "title": "Roda de conversa para casais",
+    "text": "Encontro de partilha sobre dialogo e convivencia familiar, na sala de reunioes da comunidade. Todos os casais sao bem-vindos.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-18T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.452Z",
+    "pastoral": 5,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "c6e6f525-8430-5b5d-ac2f-d93558df67df",
+  "fields": {
+    "title": "Preparacao dos voluntarios para visitas",
+    "text": "Os voluntarios se reunirao para organizar as visitas e revisar os cuidados de acolhimento. Ponto de encontro na secretaria paroquial.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-19T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.453Z",
+    "pastoral": 6,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "55d70584-623c-5bf8-927b-87534c870d76",
+  "fields": {
+    "title": "Mutirao de arrecadacao de alimentos",
+    "text": "Ajude a preparar cestas para as familias acompanhadas pela comunidade. Receberemos alimentos nao pereciveis no salao paroquial.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-20T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.453Z",
+    "pastoral": 7,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "32edf6f8-afdc-5584-9742-119d924b5ac8",
+  "fields": {
+    "title": "Encontro de catequese com as familias",
+    "text": "Catequizandos e responsaveis participarao de um momento de oracao e integracao. Pedimos que tragam o material de catequese.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-21T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.454Z",
+    "pastoral": 8,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "ad66c285-6a36-5ac7-ac2b-abdced529b4e",
+  "fields": {
+    "title": "Reuniao da equipe de acolhimento",
+    "text": "A equipe vai planejar as proximas atividades de escuta e apoio as familias. Reuniao reservada aos voluntarios na sala pastoral.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-22T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.454Z",
+    "pastoral": 9,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "b188fa79-d24e-5125-987f-cdd922e05648",
+  "fields": {
+    "title": "Grupo de partilha e acolhimento",
+    "text": "Nosso encontro oferece um espaco de escuta e apoio para pessoas e familias. A participacao e gratuita no salao da comunidade.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-23T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.454Z",
+    "pastoral": 10,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "8e1e3aee-886e-5345-aa5b-cf79abbc48c2",
+  "fields": {
+    "title": "Encontro dos agentes do dizimo",
+    "text": "Vamos organizar a acolhida das familias e o calendario de atendimento. Os agentes devem levar suas sugestoes para o proximo mes.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-24T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.455Z",
+    "pastoral": 11,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "705587e8-bfcb-597d-8d66-78a0a5b48964",
+  "fields": {
+    "title": "Preparacao das equipes de celebracao",
+    "text": "Leitores, salmistas e ministros estao convidados para preparar as proximas celebracoes. Encontro na igreja matriz.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-25T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.455Z",
+    "pastoral": 12,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "583ddada-2635-51df-bd0e-57e6235aa0b5",
+  "fields": {
+    "title": "Oficina de comunicacao da comunidade",
+    "text": "Oficina pratica para quem deseja colaborar com fotos, textos e avisos paroquiais. Leve seu celular carregado.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-26T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.456Z",
+    "pastoral": 13,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "4abfe5a1-ad62-573e-b6c3-d68b7f38c0ab",
+  "fields": {
+    "title": "Formacao para novos voluntarios",
+    "text": "Venha conhecer a equipe e participar de uma conversa sobre escuta, orientacao e acolhimento nas celebracoes.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-27T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.456Z",
+    "pastoral": 14,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "d2ce6315-9fcb-5946-9def-cd4f2e0ca981",
+  "fields": {
+    "title": "Tarde de convivencia e memoria",
+    "text": "Uma tarde com musica, conversa e partilha de historias no salao paroquial. Familiares e acompanhantes tambem estao convidados.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-28T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.457Z",
+    "pastoral": 15,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "19cd0a7e-a705-5b48-8520-7dfc15a937b3",
+  "fields": {
+    "title": "Cafe e conversa com universitarios",
+    "text": "Estudantes vao compartilhar experiencias de estudo, trabalho e vida comunitaria. Traga sua caneca para o cafe partilhado.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-29T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.457Z",
+    "pastoral": 16,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "4a4f9837-8a5f-55d6-ab0b-98c007bccc89",
+  "fields": {
+    "title": "Encontro de educadores da comunidade",
+    "text": "Professores e voluntarios vao trocar ideias para as atividades educativas. O encontro acontecera na sala de formacao.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-11-30T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.457Z",
+    "pastoral": 17,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "bb122c4c-3930-5cf1-883b-e6392d2b7d2e",
+  "fields": {
+    "title": "Mutirao de cuidado com a praca",
+    "text": "Vamos recolher residuos e cuidar dos canteiros da praca da comunidade. Use roupa confortavel e leve sua garrafa de agua.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-01T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.458Z",
+    "pastoral": 18,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "af9af27b-3825-5812-9616-fc39be3b7dd8",
+  "fields": {
+    "title": "Preparacao de pais e padrinhos",
+    "text": "Encontro de preparacao para o batismo no salao paroquial. Confirme sua participacao com a secretaria e traga suas duvidas.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-02T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.458Z",
+    "pastoral": 19,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "6d3f8699-676a-5bbc-b35d-926f5124278d",
+  "fields": {
+    "title": "Encontro dos crismandos e padrinhos",
+    "text": "Momento de formacao, oracao e convivencia para crismandos e padrinhos. Leve a Biblia e um caderno para anotacoes.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-03T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.459Z",
+    "pastoral": 20,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "ac2962c2-0d1f-50bb-8224-31e7d1315300",
+  "fields": {
+    "title": "Tarde de discernimento e partilha",
+    "text": "Jovens e adultos estao convidados para conversar sobre vocacao e servico. O encontro sera na sala de formacao.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-04T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.459Z",
+    "pastoral": 21,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "c2b28631-f918-5fe0-9a4c-2ce042d243fd",
+  "fields": {
+    "title": "Cafe de acolhida para novas familias",
+    "text": "Um momento para conhecer a comunidade, compartilhar historias e apresentar os grupos pastorais. Traga algo para o cafe coletivo, se puder.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-05T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.460Z",
+    "pastoral": 22,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "503b19dd-0095-5c56-bb83-97f880f4af64",
+  "fields": {
+    "title": "Noite de musica e solidariedade",
+    "text": "Os jovens vao organizar uma noite de musica no salao paroquial. Quem puder pode colaborar com um quilo de alimento.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-06T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.460Z",
+    "pastoral": 1,
+    "category": 1,
+    "is_notice": true
+  }
+},
+{
+  "model": "core.message",
+  "pk": "5678647e-12c6-5cd4-95d1-f48ae62f93a5",
+  "fields": {
+    "title": "Piquenique das familias",
+    "text": "Encontro de convivencia no patio da comunidade, com brincadeiras e lanche partilhado. Em caso de chuva, usaremos o salao.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-07T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.460Z",
+    "pastoral": 5,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "27b3eddb-ab05-596d-9fef-357860d798fd",
+  "fields": {
+    "title": "Organizacao das doacoes recebidas",
+    "text": "Precisamos de voluntarios para separar roupas e alimentos. O ponto de encontro sera o deposito ao lado da secretaria.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-08T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.461Z",
+    "pastoral": 7,
+    "category": 1,
+    "is_notice": false
+  }
+},
+{
+  "model": "core.message",
+  "pk": "82011942-414f-519f-a0f8-6b353498922e",
+  "fields": {
+    "title": "Ensaio dos cantos da comunidade",
+    "text": "Cantores e instrumentistas vao ensaiar os cantos das proximas celebracoes. Novos participantes tambem sao bem-vindos.",
+    "autor": 4,
+    "image": null,
+    "event_date": "2026-12-09T22:30:00Z",
+    "created_at": "2026-11-15T12:22:53.461Z",
+    "pastoral": 12,
+    "category": 1,
+    "is_notice": false
+  }
+}
+]
