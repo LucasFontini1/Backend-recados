@@ -1,9 +1,10 @@
 from datetime import timedelta
 
 from django.db.models import Case, DateTimeField, F, IntegerField, Q, Value, When
+from django.utils import timezone
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.viewsets import ModelViewSet
-from django.utils import timezone
 
 from core.models import Message
 from core.serializers import MessageListRetrieveSerializer, MessageSerializer
@@ -12,6 +13,8 @@ from core.serializers import MessageListRetrieveSerializer, MessageSerializer
 class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
     permission_classes = [IsAuthenticatedOrReadOnly]
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['pastoral', 'category', 'is_notice']
 
     def get_queryset(self):
         queryset = super().get_queryset()
