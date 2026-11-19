@@ -13,9 +13,16 @@ from core.serializers.user import UserGroupUpdateSerializer
 from core.permissions import is_portal_admin
 
 
-def has_protected_role(user):
-    # Admins e superadmins só podem ter seu cargo modificado no Django Admin.
-    return user.groups.filter(name__in=['admin', 'superadmin']).exists()
+def can_manage_target(actor, target):
+    # Superadmins podem gerenciar admins; admins não podem gerenciar outros admins.
+    # Contas superadmin e superusuários Django permanecem protegidas no portal.
+    if target.is_superuser or target.pk == actor.pk:
+        return False
+    if target.groups.filter(name='superadmin').exists():
+        return False
+    if target.groups.filter(name='admin').exists():
+        return actor.is_superuser or actor.groups.filter(name='superadmin').exists()
+    return True
 
 
 class UserViewSet(ModelViewSet):
@@ -39,7 +46,7 @@ class UserViewSet(ModelViewSet):
         if not is_portal_admin(request.user) or not request.user.has_perm('core.delete_user'):
             raise PermissionDenied('Sem permissão para excluir usuários.')
         user = self.get_object()
-        if user.is_superuser or user.pk == request.user.pk or has_protected_role(user):
+        if not can_manage_target(request.user, user):
             return Response({'detail': 'Não é permitido excluir este usuário.'}, status=400)
         user.delete()
         return Response(status=204)
@@ -53,7 +60,7 @@ class UserViewSet(ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Sem permissão para alterar grupos.')
         target = self.get_object()
-        if target.is_superuser or target.pk == request.user.pk or has_protected_role(target):
+        if not can_manage_target(request.user, target):
             return Response({'detail': 'Não é permitido alterar este usuário.'}, status=400)
         serializer = UserGroupUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
