@@ -446,7 +446,7 @@ class NoticeImageRulesTests(TestCase):
         )
         response = self.client.put(f'/api/recados/{message.pk}/', self.payload(
             is_notice=True, attachment_key=None,
-        ))
+        ), format='json')
         self.assertEqual(response.status_code, 200)
         message.refresh_from_db()
         self.assertTrue(message.is_notice)
