@@ -1,4 +1,4 @@
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from core.permissions import AdminGroupModelPermissionsOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from core.models import Pastoral
@@ -9,7 +9,7 @@ class PastoralViewSet(ModelViewSet):
     queryset = Pastoral.objects.all().order_by('id')
     serializer_class = PastoralSerializer
     pagination_class = None
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AdminGroupModelPermissionsOrReadOnly]
     http_method_names = ['get', 'post', 'put', 'delete']
 
     def get_serializer_class(self):
