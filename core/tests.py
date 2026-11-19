@@ -140,3 +140,108 @@ class PortalPermissionsTests(TestCase):
             'email': 'intruso@exemplo.com', 'password': 'senhaSegura123',
         })
         self.assertEqual(response.status_code, 405)
+
+
+class AdministrationWorkflowTests(TestCase):
+    def setUp(self):
+        from django.contrib.auth.models import Group, Permission
+        self.client = APIClient()
+        self.viewer = User.objects.create_user(
+            email='questioner@example.com', password='safePassword123', name='Perguntador'
+        )
+        self.other = User.objects.create_user(
+            email='another@example.com', password='safePassword123', name='Outro'
+        )
+        self.admin_user = User.objects.create_user(
+            email='director@example.com', password='safePassword123', name='Diretor'
+        )
+        self.admin_user.groups.set([Group.objects.get(name='admin')])
+        self.admin_user.user_permissions.add(
+            *Permission.objects.filter(
+                content_type__app_label='core',
+                codename__in=[
+                    'view_question', 'change_question', 'view_message',
+                    'change_message', 'delete_message', 'view_user', 'delete_user',
+                ],
+            )
+        )
+        self.pastoral = Pastoral.objects.create(name='Pastoral teste')
+        self.category = Category.objects.create(name='Categoria teste')
+
+    def test_answer_is_visible_only_to_its_author_and_administrators(self):
+        from core.models import Question
+        question = Question.objects.create(
+            subject='Dúvida', text='Quando será?', author=self.viewer
+        )
+        self.client.force_authenticate(self.viewer)
+        self.assertEqual(self.client.get('/api/perguntas/').status_code, 403)
+        own = self.client.get('/api/perguntas/minhas/')
+        self.assertEqual(own.status_code, 200)
+        self.assertEqual(len(own.data), 1)
+        self.assertEqual(own.data[0]['answer'], '')
+        self.assertEqual(self.client.post(f'/api/perguntas/{question.id}/responder/', {'answer': 'Olá'}).status_code, 403)
+
+        self.client.force_authenticate(self.admin_user)
+        reply = self.client.post(f'/api/perguntas/{question.id}/responder/', {
+            'answer': 'A reunião será no domingo.'
+        })
+        self.assertEqual(reply.status_code, 200)
+        self.assertIsNotNone(reply.data['answered_at'])
+        self.assertEqual(reply.data['answer'], 'A reunião será no domingo.')
+
+        self.client.force_authenticate(self.other)
+        self.assertEqual(self.client.get('/api/perguntas/minhas/').data, [])
+        self.client.force_authenticate(self.viewer)
+        self.assertEqual(
+            self.client.get('/api/perguntas/minhas/').data[0]['answer'],
+            'A reunião será no domingo.',
+        )
+
+    def test_notice_listing_orders_newest_first(self):
+        first = Message.objects.create(
+            title='Antigo', text='Texto', autor=self.admin_user,
+            pastoral=self.pastoral, category=self.category, is_notice=True,
+        )
+        second = Message.objects.create(
+            title='Novo', text='Texto', autor=self.admin_user,
+            pastoral=self.pastoral, category=self.category, is_notice=True,
+        )
+        response = self.client.get('/api/recados/?is_notice=true')
+        self.assertEqual(response.status_code, 200)
+        data = response.data['results'] if isinstance(response.data, dict) else response.data
+        self.assertEqual([x['id'] for x in data][:2], [str(second.id), str(first.id)])
+
+    def test_admin_can_access_archived_messages_and_full_history(self):
+        expired = Message.objects.create(
+            title='Evento antigo', text='Texto', autor=self.admin_user,
+            pastoral=self.pastoral, category=self.category, is_notice=False,
+            event_date=timezone.now() - timedelta(days=30),
+        )
+        self.client.force_authenticate(self.viewer)
+        self.assertEqual(self.client.get('/api/recados/?admin_all=1').status_code, 403)
+        self.client.force_authenticate(self.admin_user)
+        response = self.client.get('/api/recados/?admin_all=1')
+        self.assertEqual(response.status_code, 200)
+        self.assertIsInstance(response.data, list)
+        self.assertIn(str(expired.id), [x['id'] for x in response.data])
+
+    def test_administrator_can_delete_other_users_but_not_self(self):
+        self.client.force_authenticate(self.admin_user)
+        self.assertEqual(self.client.delete(f'/api/usuarios/{self.other.pk}/').status_code, 204)
+        self.assertFalse(User.objects.filter(pk=self.other.pk).exists())
+        self.assertEqual(self.client.delete(f'/api/usuarios/{self.admin_user.pk}/').status_code, 400)
+
+    def test_edit_message_does_not_change_original_author(self):
+        notice = Message.objects.create(
+            title='Aviso inicial', text='Texto', autor=self.viewer,
+            pastoral=self.pastoral, category=self.category, is_notice=True,
+        )
+        self.client.force_authenticate(self.admin_user)
+        response = self.client.put(f'/api/recados/{notice.pk}/', {
+            'title': 'Aviso revisado', 'text': 'Texto atualizado',
+            'pastoral': self.pastoral.pk, 'category': self.category.pk, 'is_notice': True,
+        })
+        self.assertEqual(response.status_code, 200)
+        notice.refresh_from_db()
+        self.assertEqual(notice.autor_id, self.viewer.pk)
+        self.assertEqual(notice.title, 'Aviso revisado')
