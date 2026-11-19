@@ -60,3 +60,80 @@ class MessageListOrderingTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual([item['id'] for item in response.data], [str(recent.id)])
         self.assertEqual(retrieve_response.status_code, 404)
+
+
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+
+
+class PortalPermissionsTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.viewer = User.objects.create_user(
+            email='viewer@exemplo.com', password='senhaSegura123', name='Viewer'
+        )
+        self.admin_user = User.objects.create_user(
+            email='admin@exemplo.com', password='senhaSegura123', name='Administrador'
+        )
+        self.admin_group = Group.objects.get(name='admin')
+        self.admin_user.groups.set([self.admin_group])
+
+    def grant(self, user, model, codename):
+        permission = Permission.objects.get(
+            content_type=ContentType.objects.get_for_model(model),
+            codename=codename,
+        )
+        user.user_permissions.add(permission)
+
+    def test_register_assigns_viewer_by_default(self):
+        response = self.client.post('/api/registro/', {
+            'email': 'novo@exemplo.com', 'name': 'Novo', 'password': 'senhaSegura123'
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(User.objects.get(email='novo@exemplo.com').groups.filter(name='viewer').exists())
+
+    def test_viewer_cannot_create_pastorals_or_categories(self):
+        self.client.force_authenticate(self.viewer)
+        self.assertEqual(self.client.post('/api/pastorais/', {'name': 'Nova'}).status_code, 403)
+        self.assertEqual(self.client.post('/api/categorias/', {'name': 'Nova'}).status_code, 403)
+
+    def test_admin_needs_django_add_permission(self):
+        self.client.force_authenticate(self.admin_user)
+        self.assertEqual(self.client.post('/api/categorias/', {'name': 'Teste'}).status_code, 403)
+        self.grant(self.admin_user, Category, 'add_category')
+        self.assertEqual(self.client.post('/api/categorias/', {'name': 'Teste'}).status_code, 201)
+
+    def test_viewer_can_send_question_but_not_read_inbox(self):
+        self.client.force_authenticate(self.viewer)
+        response = self.client.post('/api/perguntas/', {
+            'subject': 'Horários', 'text': 'Quando é a próxima reunião?'
+        })
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(self.client.get('/api/perguntas/').status_code, 403)
+
+    def test_admin_needs_permission_to_read_questions(self):
+        self.client.force_authenticate(self.admin_user)
+        self.assertEqual(self.client.get('/api/perguntas/').status_code, 403)
+        from core.models import Question
+        self.grant(self.admin_user, Question, 'view_question')
+        self.assertEqual(self.client.get('/api/perguntas/').status_code, 200)
+
+    def test_group_change_requires_permission_and_rejects_self_change(self):
+        self.client.force_authenticate(self.admin_user)
+        url = f'/api/usuarios/{self.viewer.pk}/grupo/'
+        self.assertEqual(self.client.post(url, {'group': 'admin'}).status_code, 403)
+        self.grant(self.admin_user, User, 'view_user')
+        self.grant(self.admin_user, User, 'change_user')
+        self.assertEqual(self.client.post(url, {'group': 'admin'}).status_code, 200)
+        self.viewer.refresh_from_db()
+        self.assertTrue(self.viewer.groups.filter(name='admin').exists())
+        self.assertFalse(self.viewer.groups.filter(name='viewer').exists())
+        own_url = f'/api/usuarios/{self.admin_user.pk}/grupo/'
+        self.assertEqual(self.client.post(own_url, {'group': 'viewer'}).status_code, 400)
+
+    def test_cannot_create_user_using_user_listing_endpoint(self):
+        self.client.force_authenticate(self.viewer)
+        response = self.client.post('/api/usuarios/', {
+            'email': 'intruso@exemplo.com', 'password': 'senhaSegura123',
+        })
+        self.assertEqual(response.status_code, 405)
