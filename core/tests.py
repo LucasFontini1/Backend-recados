@@ -245,3 +245,73 @@ class AdministrationWorkflowTests(TestCase):
         notice.refresh_from_db()
         self.assertEqual(notice.autor_id, self.viewer.pk)
         self.assertEqual(notice.title, 'Aviso revisado')
+
+
+class ProtectedAdminRolesTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.admin_group = Group.objects.get(name='admin')
+        self.superadmin_group = Group.objects.get(name='superadmin')
+
+        self.admin = User.objects.create_user(
+            email='manager@example.com', password='strong-password-123',
+        )
+        self.admin.groups.set([self.admin_group])
+        self.admin.user_permissions.add(*Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(User),
+            codename__in=['view_user', 'change_user', 'delete_user'],
+        ))
+        self.another_admin = User.objects.create_user(
+            email='another-admin@example.com', password='strong-password-123',
+        )
+        self.another_admin.groups.set([self.admin_group])
+        self.superadmin = User.objects.create_user(
+            email='super-admin@example.com', password='strong-password-123',
+        )
+        self.superadmin.groups.set([self.superadmin_group])
+        self.viewer = User.objects.create_user(
+            email='regular-viewer@example.com', password='strong-password-123',
+        )
+
+    def test_superadmin_group_is_created_by_migration(self):
+        self.assertTrue(Group.objects.filter(name='superadmin').exists())
+
+    def test_admin_can_promote_viewer(self):
+        self.client.force_authenticate(self.admin)
+        result = self.client.post(
+            f'/api/usuarios/{self.viewer.pk}/grupo/', {'group': 'admin'},
+        )
+        self.assertEqual(result.status_code, 200)
+        self.assertTrue(self.viewer.groups.filter(name='admin').exists())
+
+    def test_admin_cannot_demote_or_delete_another_admin(self):
+        self.client.force_authenticate(self.admin)
+        url = f'/api/usuarios/{self.another_admin.pk}/'
+        self.assertEqual(
+            self.client.post(url + 'grupo/', {'group': 'viewer'}).status_code, 400,
+        )
+        self.assertEqual(self.client.delete(url).status_code, 400)
+        self.assertTrue(self.another_admin.groups.filter(name='admin').exists())
+        self.assertTrue(User.objects.filter(pk=self.another_admin.pk).exists())
+
+    def test_superadmin_cannot_be_changed_or_deleted_through_portal(self):
+        self.client.force_authenticate(self.admin)
+        url = f'/api/usuarios/{self.superadmin.pk}/'
+        self.assertEqual(
+            self.client.post(url + 'grupo/', {'group': 'viewer'}).status_code, 400,
+        )
+        self.assertEqual(self.client.delete(url).status_code, 400)
+        self.assertTrue(self.superadmin.groups.filter(name='superadmin').exists())
+
+    def test_portal_cannot_assign_superadmin_group(self):
+        self.client.force_authenticate(self.admin)
+        result = self.client.post(
+            f'/api/usuarios/{self.viewer.pk}/grupo/', {'group': 'superadmin'},
+        )
+        self.assertEqual(result.status_code, 400)
+        self.assertFalse(self.viewer.groups.filter(name='superadmin').exists())
+
+    def test_superadmin_has_portal_access_but_not_automatic_django_permissions(self):
+        from core.permissions import is_portal_admin
+        self.assertTrue(is_portal_admin(self.superadmin))
+        self.assertFalse(self.superadmin.has_perm('core.delete_user'))
