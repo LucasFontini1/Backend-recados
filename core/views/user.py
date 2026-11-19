@@ -5,7 +5,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from rest_framework.exceptions import MethodNotAllowed
+from rest_framework.exceptions import MethodNotAllowed, PermissionDenied
 
 from core.models import User
 from core.serializers import UserRegistrationSerializer, UserSerializer
@@ -17,7 +17,7 @@ class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'post']
+    http_method_names = ['get', 'post', 'delete']
 
     def get_queryset(self):
         if self.action == 'me':
@@ -26,6 +26,18 @@ class UserViewSet(ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Sem permissão para listar usuários.')
         return super().get_queryset()
+
+    def paginate_queryset(self, queryset):
+        return None
+
+    def destroy(self, request, *args, **kwargs):
+        if not is_portal_admin(request.user) or not request.user.has_perm('core.delete_user'):
+            raise PermissionDenied('Sem permissão para excluir usuários.')
+        user = self.get_object()
+        if user.is_superuser or user.pk == request.user.pk:
+            return Response({'detail': 'Não é permitido excluir este usuário.'}, status=400)
+        user.delete()
+        return Response(status=204)
 
     def create(self, request, *args, **kwargs):
         raise MethodNotAllowed('POST')
