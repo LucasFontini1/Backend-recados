@@ -5,6 +5,7 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
+from rest_framework.exceptions import MethodNotAllowed
 
 from core.models import User
 from core.serializers import UserRegistrationSerializer, UserSerializer
@@ -25,6 +26,9 @@ class UserViewSet(ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Sem permissão para listar usuários.')
         return super().get_queryset()
+
+    def create(self, request, *args, **kwargs):
+        raise MethodNotAllowed('POST')
 
     @action(detail=True, methods=['post'], url_path='grupo')
     def set_group(self, request, pk=None):
