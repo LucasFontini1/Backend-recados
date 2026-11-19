@@ -21,6 +21,7 @@ from core.views import (
     UserViewSet,
 )
 from uploader.router import router as uploader_router
+from core.views.home import PublicHomeView
 
 router = DefaultRouter()
 
@@ -51,6 +52,7 @@ urlpatterns = [
     # Registro de usuários
     path('api/registro/', UserRegistrationView.as_view(), name='user_registration'),
     # API
+    path('api/home/', PublicHomeView.as_view(), name='public-home'),
     path('api/', include(router.urls)),
     path('api/media/', include(uploader_router.urls)),
 ]
