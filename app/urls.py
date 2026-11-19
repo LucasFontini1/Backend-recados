@@ -11,6 +11,7 @@ from rest_framework.routers import DefaultRouter
 
 from core.views import (
     CategoryViewSet,
+    QuestionViewSet,
     CustomTokenObtainPairView,
     CustomTokenRefreshView,
     CustomTokenVerifyView,
@@ -26,6 +27,7 @@ router = DefaultRouter()
 router.register(r'categorias', CategoryViewSet, basename='categorias')
 router.register(r'pastorais', PastoralViewSet, basename='pastorais')
 router.register(r'recados', MessageViewSet, basename='recados')
+router.register(r'perguntas', QuestionViewSet, basename='perguntas')
 router.register(r'usuarios', UserViewSet, basename='usuarios')
 
 urlpatterns = [
