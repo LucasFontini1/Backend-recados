@@ -351,3 +351,45 @@ class ProtectedAdminRolesTests(TestCase):
             400,
         )
         self.assertEqual(self.client.delete(f'/api/usuarios/{second.pk}/').status_code, 400)
+
+
+class PublicHomePerformanceTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.pastoral = Pastoral.objects.create(name='Comunidade')
+        self.category = Category.objects.create(name='Avisos')
+        self.user = User.objects.create_user(email='homeperf@example.com', password='safePassword123')
+
+    def test_home_combines_four_public_resources_without_authentication(self):
+        from core.models import Message
+        event = Message.objects.create(
+            title='Evento futuro', text='Detalhes', autor=self.user, pastoral=self.pastoral,
+            category=self.category, event_date=timezone.now() + timedelta(days=1), is_notice=False,
+        )
+        notice = Message.objects.create(
+            title='Aviso novo', text='Comunicado', autor=self.user, pastoral=self.pastoral,
+            category=self.category, is_notice=True,
+        )
+        response = self.client.get('/api/home/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['messages'][0]['id'], str(event.id))
+        self.assertEqual(response.data['notices'][0]['id'], str(notice.id))
+        self.assertEqual(response.data['pastorals'][0]['name'], self.pastoral.name)
+        self.assertEqual(response.data['categories'][0]['name'], self.category.name)
+
+    def test_home_excludes_old_events_and_limits_public_lists(self):
+        from core.models import Message
+        Message.objects.create(
+            title='Evento vencido', text='Expirado', autor=self.user, pastoral=self.pastoral,
+            category=self.category, event_date=timezone.now() - timedelta(days=30),
+            is_notice=False,
+        )
+        for number in range(12):
+            Message.objects.create(
+                title=f'Aviso {number}', text='Comunicado', autor=self.user,
+                pastoral=self.pastoral, category=self.category, is_notice=True,
+            )
+        response = self.client.get('/api/home/')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['messages'], [])
+        self.assertEqual(len(response.data['notices']), 10)
