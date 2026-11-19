@@ -19,6 +19,16 @@ class MessageSerializer(serializers.ModelSerializer):
             write_only=True,
     )
     autor = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
+    def validate(self, attrs):
+        # Avisos gerais nunca podem carregar imagens, mesmo pela API direta.
+        is_notice = attrs.get('is_notice', self.instance.is_notice if self.instance else False)
+        image = attrs.get('image', self.instance.image if self.instance else None)
+        if is_notice and image is not None:
+            raise serializers.ValidationError({
+                'attachment_key': 'Avisos gerais não podem ter imagem. Remova a imagem antes de salvar.'
+            })
+        return attrs
+
     class Meta:
         model = Message
         fields = ['id', 'title', 'text', 'autor', 'image', 'event_date', 'created_at', 'pastoral', 'category', 'attachment_key', 'is_notice']  # ruff: ignore[line-too-long]
