@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.db.models import Case, DateTimeField, F, IntegerField, Q, Value, When
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from core.permissions import AdminGroupModelPermissionsOrReadOnly
 from rest_framework.viewsets import ModelViewSet
 
 from core.models import Message
@@ -12,7 +12,7 @@ from core.serializers import MessageListRetrieveSerializer, MessageSerializer
 
 class MessageViewSet(ModelViewSet):
     queryset = Message.objects.all()
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AdminGroupModelPermissionsOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['pastoral', 'category', 'is_notice']
 
