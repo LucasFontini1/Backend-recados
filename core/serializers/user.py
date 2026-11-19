@@ -1,3 +1,4 @@
+from django.contrib.auth.models import Group
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -9,6 +10,15 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'email', 'name', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'groups']
         depth = 1
+
+class UserGroupUpdateSerializer(serializers.Serializer):
+    group = serializers.ChoiceField(choices=['viewer', 'admin'])
+
+    def update(self, instance, validated_data):
+        group = Group.objects.get(name=validated_data['group'])
+        instance.groups.set([group])
+        return instance
+
 
 class SimpleUserSerializer(ModelSerializer):
     class Meta:
