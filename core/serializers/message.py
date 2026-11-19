@@ -18,7 +18,7 @@ class MessageSerializer(serializers.ModelSerializer):
             allow_null=True,
             write_only=True,
     )
-    autor = serializers.HiddenField(default=serializers.CurrentUserDefault())
+    autor = serializers.HiddenField(default=serializers.CreateOnlyDefault(serializers.CurrentUserDefault()))
     class Meta:
         model = Message
         fields = ['id', 'title', 'text', 'autor', 'image', 'event_date', 'created_at', 'pastoral', 'category', 'attachment_key', 'is_notice']  # ruff: ignore[line-too-long]
