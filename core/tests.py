@@ -84,6 +84,9 @@ class PortalPermissionsTests(TestCase):
             codename=codename,
         )
         user.user_permissions.add(permission)
+        for attr in ('_perm_cache', '_user_perm_cache', '_group_perm_cache'):
+            if hasattr(user, attr):
+                delattr(user, attr)
 
     def test_register_assigns_viewer_by_default(self):
         response = self.client.post('/api/registro/', {
