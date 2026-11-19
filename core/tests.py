@@ -393,3 +393,72 @@ class PublicHomePerformanceTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['messages'], [])
         self.assertEqual(len(response.data['notices']), 10)
+
+
+class NoticeImageRulesTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+        self.admin = User.objects.create_user(
+            email='image-admin@example.com', password='strongPassword123',
+        )
+        self.admin.groups.set([Group.objects.get(name='admin')])
+        self.admin.user_permissions.add(*Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(Message),
+            codename__in=['add_message', 'change_message'],
+        ))
+        self.pastoral = Pastoral.objects.create(name='Pastoral de imagem')
+        self.category = Category.objects.create(name='Categoria de imagem')
+        self.image = Image.objects.create(file='images/test.jpg')
+        self.client.force_authenticate(self.admin)
+
+    def payload(self, **overrides):
+        data = {
+            'title': 'Recado de teste',
+            'text': 'Texto',
+            'pastoral': self.pastoral.pk,
+            'category': self.category.pk,
+            'is_notice': False,
+        }
+        data.update(overrides)
+        return data
+
+    def test_event_can_have_image(self):
+        response = self.client.post('/api/recados/', self.payload(
+            attachment_key=str(self.image.attachment_key),
+        ))
+        self.assertEqual(response.status_code, 201)
+        message = Message.objects.get(pk=response.data['id'])
+        self.assertEqual(message.image_id, self.image.pk)
+
+    def test_notice_cannot_have_image(self):
+        response = self.client.post('/api/recados/', self.payload(
+            is_notice=True,
+            attachment_key=str(self.image.attachment_key),
+        ))
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('attachment_key', response.data)
+
+    def test_update_can_remove_image_when_converting_to_notice(self):
+        message = Message.objects.create(
+            title='Evento com imagem', text='Texto', autor=self.admin,
+            pastoral=self.pastoral, category=self.category,
+            image=self.image, is_notice=False,
+        )
+        response = self.client.put(f'/api/recados/{message.pk}/', self.payload(
+            is_notice=True, attachment_key=None,
+        ))
+        self.assertEqual(response.status_code, 200)
+        message.refresh_from_db()
+        self.assertTrue(message.is_notice)
+        self.assertIsNone(message.image)
+
+    def test_update_rejects_notice_with_existing_image(self):
+        message = Message.objects.create(
+            title='Evento com imagem', text='Texto', autor=self.admin,
+            pastoral=self.pastoral, category=self.category,
+            image=self.image, is_notice=False,
+        )
+        response = self.client.put(f'/api/recados/{message.pk}/', self.payload(
+            is_notice=True,
+        ))
+        self.assertEqual(response.status_code, 400)
