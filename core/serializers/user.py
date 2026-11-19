@@ -6,9 +6,14 @@ from core.models import User
 
 
 class UserSerializer(ModelSerializer):
+    permissions = serializers.SerializerMethodField()
+
+    def get_permissions(self, obj):
+        return sorted(obj.get_all_permissions())
+
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'groups']
+        fields = ['id', 'email', 'name', 'is_active', 'is_staff', 'is_superuser', 'last_login', 'groups', 'permissions']
         depth = 1
 
 class UserGroupUpdateSerializer(serializers.Serializer):
