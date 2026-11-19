@@ -13,6 +13,11 @@ from core.serializers.user import UserGroupUpdateSerializer
 from core.permissions import is_portal_admin
 
 
+def has_protected_role(user):
+    # Admins e superadmins só podem ter seu cargo modificado no Django Admin.
+    return user.groups.filter(name__in=['admin', 'superadmin']).exists()
+
+
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
@@ -34,7 +39,7 @@ class UserViewSet(ModelViewSet):
         if not is_portal_admin(request.user) or not request.user.has_perm('core.delete_user'):
             raise PermissionDenied('Sem permissão para excluir usuários.')
         user = self.get_object()
-        if user.is_superuser or user.pk == request.user.pk:
+        if user.is_superuser or user.pk == request.user.pk or has_protected_role(user):
             return Response({'detail': 'Não é permitido excluir este usuário.'}, status=400)
         user.delete()
         return Response(status=204)
@@ -48,7 +53,7 @@ class UserViewSet(ModelViewSet):
             from rest_framework.exceptions import PermissionDenied
             raise PermissionDenied('Sem permissão para alterar grupos.')
         target = self.get_object()
-        if target.is_superuser or target.pk == request.user.pk:
+        if target.is_superuser or target.pk == request.user.pk or has_protected_role(target):
             return Response({'detail': 'Não é permitido alterar este usuário.'}, status=400)
         serializer = UserGroupUpdateSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
