@@ -2,7 +2,7 @@ from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 def is_portal_admin(user):
     return bool(user and user.is_authenticated and (
-        user.is_superuser or user.groups.filter(name='admin').exists()
+        user.is_superuser or user.groups.filter(name__in=['admin', 'superadmin']).exists()
     ))
 
 class AdminGroupModelPermissionsOrReadOnly(BasePermission):
