@@ -13,7 +13,6 @@ def create_groups(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ('core', '0008_alter_message_image'),
-        migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('auth', '0012_alter_user_first_name_max_length'),
     ]
 
