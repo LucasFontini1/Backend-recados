@@ -3,6 +3,7 @@ Database models.
 """
 
 from django.contrib.auth.models import (
+    Group,
     AbstractBaseUser,
     BaseUserManager,
     PermissionsMixin,
@@ -24,6 +25,8 @@ class UserManager(BaseUserManager):
         user = self.model(email=self.normalize_email(email), **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
+        viewer, _ = Group.objects.db_manager(self._db).get_or_create(name='viewer')
+        user.groups.add(viewer)
 
         return user
 
@@ -33,6 +36,7 @@ class UserManager(BaseUserManager):
         user.is_staff = True
         user.is_superuser = True
         user.save(using=self._db)
+        user.groups.remove(*user.groups.filter(name='viewer'))
 
         return user
 
