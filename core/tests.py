@@ -315,3 +315,39 @@ class ProtectedAdminRolesTests(TestCase):
         from core.permissions import is_portal_admin
         self.assertTrue(is_portal_admin(self.superadmin))
         self.assertFalse(self.superadmin.has_perm('core.delete_user'))
+
+    def test_superadmin_can_demote_and_delete_admin(self):
+        self.superadmin.user_permissions.add(*Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(User),
+            codename__in=['view_user', 'change_user', 'delete_user'],
+        ))
+        self.client.force_authenticate(self.superadmin)
+        response = self.client.post(
+            f'/api/usuarios/{self.another_admin.pk}/grupo/',
+            {'group': 'viewer'},
+        )
+        self.assertEqual(response.status_code, 200)
+        self.another_admin.refresh_from_db()
+        self.assertTrue(self.another_admin.groups.filter(name='viewer').exists())
+        self.another_admin.groups.set([self.admin_group])
+        response = self.client.delete(f'/api/usuarios/{self.another_admin.pk}/')
+        self.assertEqual(response.status_code, 204)
+        self.assertFalse(User.objects.filter(pk=self.another_admin.pk).exists())
+
+    def test_superadmin_cannot_change_or_delete_another_superadmin(self):
+        second = User.objects.create_user(
+            email='second-superadmin@example.com', password='strong-password-123',
+        )
+        second.groups.set([self.superadmin_group])
+        self.superadmin.user_permissions.add(*Permission.objects.filter(
+            content_type=ContentType.objects.get_for_model(User),
+            codename__in=['view_user', 'change_user', 'delete_user'],
+        ))
+        self.client.force_authenticate(self.superadmin)
+        self.assertEqual(
+            self.client.post(
+                f'/api/usuarios/{second.pk}/grupo/', {'group': 'viewer'},
+            ).status_code,
+            400,
+        )
+        self.assertEqual(self.client.delete(f'/api/usuarios/{second.pk}/').status_code, 400)
