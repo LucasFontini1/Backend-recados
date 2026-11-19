@@ -40,7 +40,7 @@ class MessageListOrderingTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            [item['id'] for item in response.data],
+            [item['id'] for item in (response.data['results'] if isinstance(response.data, dict) else response.data)],
             [
                 str(upcoming_soon.id),
                 str(upcoming_later.id),
@@ -58,7 +58,7 @@ class MessageListOrderingTests(TestCase):
         retrieve_response = self.client.get(reverse('recados-detail', args=[expired.id]))
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual([item['id'] for item in response.data], [str(recent.id)])
+        self.assertEqual([item['id'] for item in (response.data['results'] if isinstance(response.data, dict) else response.data)], [str(recent.id)])
         self.assertEqual(retrieve_response.status_code, 404)
 
 
