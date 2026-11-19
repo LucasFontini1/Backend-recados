@@ -8,13 +8,37 @@ from rest_framework.viewsets import ModelViewSet
 
 from core.models import User
 from core.serializers import UserRegistrationSerializer, UserSerializer
+from core.serializers.user import UserGroupUpdateSerializer
+from core.permissions import is_portal_admin
 
 
 class UserViewSet(ModelViewSet):
     queryset = User.objects.all().order_by('id')
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    http_method_names = ['get', 'delete']
+    http_method_names = ['get', 'post']
+
+    def get_queryset(self):
+        if self.action == 'me':
+            return User.objects.filter(pk=self.request.user.pk)
+        if not is_portal_admin(self.request.user) or not self.request.user.has_perm('core.view_user'):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Sem permissão para listar usuários.')
+        return super().get_queryset()
+
+    @action(detail=True, methods=['post'], url_path='grupo')
+    def set_group(self, request, pk=None):
+        if not is_portal_admin(request.user) or not request.user.has_perm('core.change_user'):
+            from rest_framework.exceptions import PermissionDenied
+            raise PermissionDenied('Sem permissão para alterar grupos.')
+        target = self.get_object()
+        if target.is_superuser or target.pk == request.user.pk:
+            return Response({'detail': 'Não é permitido alterar este usuário.'}, status=400)
+        serializer = UserGroupUpdateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.update(target, serializer.validated_data)
+        return Response(UserSerializer(target).data)
+
 
     @extend_schema(
         summary="Dados do usuário autenticado",
