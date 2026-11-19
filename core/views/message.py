@@ -11,7 +11,7 @@ from core.serializers import MessageListRetrieveSerializer, MessageSerializer
 
 
 class MessageViewSet(ModelViewSet):
-    queryset = Message.objects.all()
+    queryset = Message.objects.select_related('pastoral', 'category', 'autor', 'image').all()
     permission_classes = [AdminGroupModelPermissionsOrReadOnly]
     filter_backends = [DjangoFilterBackend]
     filterset_fields = ['pastoral', 'category', 'is_notice']
