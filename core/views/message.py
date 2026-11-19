@@ -3,7 +3,7 @@ from datetime import timedelta
 from django.db.models import Case, DateTimeField, F, IntegerField, Q, Value, When
 from django.utils import timezone
 from django_filters.rest_framework import DjangoFilterBackend
-from core.permissions import AdminGroupModelPermissionsOrReadOnly
+from core.permissions import AdminGroupModelPermissionsOrReadOnly, is_portal_admin
 from rest_framework.viewsets import ModelViewSet
 
 from core.models import Message
@@ -18,8 +18,15 @@ class MessageViewSet(ModelViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        if self.request.query_params.get('admin_all') == '1':
+            if not is_portal_admin(self.request.user) or not self.request.user.has_perm('core.view_message'):
+                from rest_framework.exceptions import PermissionDenied
+                raise PermissionDenied('Sem permissão para consultar todas as publicações.')
+            return queryset.order_by('-created_at', '-pk')
         if self.action not in {'list', 'retrieve'}:
             return queryset
+        if self.request.query_params.get('is_notice') == 'true':
+            return queryset.order_by('-created_at', '-pk')
 
         now = timezone.now()
         return (
@@ -42,6 +49,11 @@ class MessageViewSet(ModelViewSet):
             )
             .order_by('event_date_group', 'upcoming_event_date', '-past_event_date', '-created_at')
         )
+
+    def paginate_queryset(self, queryset):
+        if self.request.query_params.get('admin_all') == '1':
+            return None
+        return super().paginate_queryset(queryset)
 
     def get_serializer_class(self):
         if self.action in {'list', 'retrieve'}:
