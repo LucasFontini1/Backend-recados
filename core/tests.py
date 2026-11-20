@@ -32,8 +32,8 @@ class MessageListOrderingTests(TestCase):
         now = timezone.now()
         upcoming_later = self.create_message('upcoming later', now + timedelta(days=2))
         upcoming_soon = self.create_message('upcoming soon', now + timedelta(days=1))
-        past_earlier = self.create_message('past earlier', now - timedelta(days=2))
-        past_recent = self.create_message('past recent', now - timedelta(days=1))
+        past_earlier = self.create_message('past earlier', now - timedelta(hours=2))
+        past_recent = self.create_message('past recent', now - timedelta(hours=1))
         undated = self.create_message('undated', None)
 
         response = self.client.get(reverse('recados-list'))
