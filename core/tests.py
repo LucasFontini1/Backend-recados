@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import datetime, time, timedelta
 
 from django.test import TestCase
 from django.urls import reverse
@@ -50,9 +50,57 @@ class MessageListOrderingTests(TestCase):
             ],
         )
 
-    def test_excludes_events_more_than_seven_days_old_from_api(self):
-        expired = self.create_message('expired', timezone.now() - timedelta(days=7, minutes=1))
-        recent = self.create_message('recent', timezone.now() - timedelta(days=6))
+    def test_latest_past_event_stays_first_if_no_upcoming_event(self):
+        now = timezone.now()
+        today = self.create_message('today', now - timedelta(minutes=30))
+        older = self.create_message('older', now - timedelta(hours=2))
+
+        response = self.client.get(reverse('recados-list'))
+        items = response.data['results'] if isinstance(response.data, dict) else response.data
+        self.assertEqual(
+            [item['id'] for item in items[:2]],
+            [str(today.id), str(older.id)],
+        )
+
+    def test_future_event_stays_ahead_of_recent_past_event(self):
+        now = timezone.now()
+        future = self.create_message('future', now + timedelta(hours=4))
+        past = self.create_message('past', now - timedelta(minutes=30))
+
+        response = self.client.get(reverse('recados-list'))
+        items = response.data['results'] if isinstance(response.data, dict) else response.data
+        self.assertEqual(
+            [item['id'] for item in items[:2]],
+            [str(future.id), str(past.id)],
+        )
+
+    def test_home_uses_same_event_visibility_rule(self):
+        local_today = timezone.localdate()
+        yesterday_noon = timezone.make_aware(
+            datetime.combine(local_today - timedelta(days=1), time(12, 0))
+        )
+        expired_noon = timezone.make_aware(
+            datetime.combine(local_today - timedelta(days=2), time(12, 0))
+        )
+        visible = self.create_message('visible yesterday', yesterday_noon)
+        expired = self.create_message('expired two days ago', expired_noon)
+
+        response = self.client.get('/api/home/')
+        identifiers = [item['id'] for item in response.data['messages']]
+        self.assertIn(str(visible.id), identifiers)
+        self.assertNotIn(str(expired.id), identifiers)
+
+    def test_excludes_events_older_than_yesterday_from_api(self):
+        # Use midday in the local timezone to avoid crossing date boundaries.
+        local_today = timezone.localdate()
+        yesterday_noon = timezone.make_aware(
+            datetime.combine(local_today - timedelta(days=1), time(12, 0))
+        )
+        two_days_ago_noon = timezone.make_aware(
+            datetime.combine(local_today - timedelta(days=2), time(12, 0))
+        )
+        expired = self.create_message('expired', two_days_ago_noon)
+        recent = self.create_message('recent', yesterday_noon)
 
         response = self.client.get(reverse('recados-list'))
         retrieve_response = self.client.get(reverse('recados-detail', args=[expired.id]))
