@@ -90,7 +90,8 @@ class PortalPermissionsTests(TestCase):
 
     def test_register_assigns_viewer_by_default(self):
         response = self.client.post('/api/registro/', {
-            'email': 'novo@exemplo.com', 'name': 'Novo', 'password': 'senhaSegura123'
+            'email': 'novo@exemplo.com', 'name': 'Novo', 'password': 'senhaSegura123',
+            'accept_terms': True, 'accept_privacy': True
         })
         self.assertEqual(response.status_code, 201)
         self.assertTrue(User.objects.get(email='novo@exemplo.com').groups.filter(name='viewer').exists())
@@ -462,3 +463,47 @@ class NoticeImageRulesTests(TestCase):
             is_notice=True,
         ))
         self.assertEqual(response.status_code, 400)
+
+
+class LegalAcceptanceRegistrationTests(TestCase):
+    def setUp(self):
+        self.client = APIClient()
+
+    def payload(self, **overrides):
+        data = {
+            'email': 'newuser@example.com',
+            'name': 'Novo membro',
+            'password': 'senhaSegura123',
+            'accept_terms': True,
+            'accept_privacy': True,
+        }
+        data.update(overrides)
+        return data
+
+    def test_registration_rejects_missing_acceptance(self):
+        response = self.client.post('/api/registro/', {
+            'email': 'newuser@example.com',
+            'name': 'Novo membro',
+            'password': 'senhaSegura123',
+        }, format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertIn('accept_terms', response.data)
+        self.assertIn('accept_privacy', response.data)
+        self.assertFalse(User.objects.filter(email='newuser@example.com').exists())
+
+    def test_registration_rejects_explicit_refusal(self):
+        response = self.client.post('/api/registro/', self.payload(
+            accept_terms=False,
+        ), format='json')
+        self.assertEqual(response.status_code, 400)
+        self.assertFalse(User.objects.filter(email='newuser@example.com').exists())
+
+    def test_registration_records_acceptance_and_versions(self):
+        response = self.client.post('/api/registro/', self.payload(), format='json')
+        self.assertEqual(response.status_code, 201)
+        user = User.objects.get(email='newuser@example.com')
+        self.assertIsNotNone(user.legal_accepted_at)
+        self.assertEqual(user.terms_version, '2026-11-20')
+        self.assertEqual(user.privacy_version, '2026-11-20')
+        self.assertNotIn('accept_terms', response.data)
+        self.assertNotIn('accept_privacy', response.data)
