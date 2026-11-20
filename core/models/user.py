@@ -55,6 +55,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         help_text=_('Indica que este usuário pode acessar o Admin.'),
     )
 
+    legal_accepted_at = models.DateTimeField(null=True, blank=True, editable=False)
+    terms_version = models.CharField(max_length=20, blank=True, default='')
+    privacy_version = models.CharField(max_length=20, blank=True, default='')
+
     objects = UserManager()
 
     USERNAME_FIELD = 'email'
