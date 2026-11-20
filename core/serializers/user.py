@@ -1,4 +1,5 @@
 from django.contrib.auth.models import Group
+from django.utils import timezone
 from rest_framework import serializers
 from rest_framework.serializers import ModelSerializer
 
@@ -33,10 +34,26 @@ class SimpleUserSerializer(ModelSerializer):
 
 class UserRegistrationSerializer(ModelSerializer):
     password = serializers.CharField(write_only=True, min_length=8)
+    accept_terms = serializers.BooleanField(write_only=True, required=True)
+    accept_privacy = serializers.BooleanField(write_only=True, required=True)
 
     class Meta:
         model = User
-        fields = ['id', 'email', 'name', 'password']
+        fields = ['id', 'email', 'name', 'password', 'accept_terms', 'accept_privacy']
+
+    def validate(self, attrs):
+        if attrs.get('accept_terms') is not True:
+            raise serializers.ValidationError({'accept_terms': 'É necessário aceitar os Termos de Uso.'})
+        if attrs.get('accept_privacy') is not True:
+            raise serializers.ValidationError({'accept_privacy': 'É necessário confirmar a leitura da Política de Privacidade.'})
+        return attrs
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        validated_data.pop('accept_terms')
+        validated_data.pop('accept_privacy')
+        return User.objects.create_user(
+            **validated_data,
+            legal_accepted_at=timezone.now(),
+            terms_version='2026-11-20',
+            privacy_version='2026-11-20',
+        )
